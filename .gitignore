@@ -1,0 +1,4 @@
+private/files/*
+web/config.inc.php
+.idea/
+.idea/*

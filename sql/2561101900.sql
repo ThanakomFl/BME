@@ -1,0 +1,2 @@
+ALTER TABLE documents
+  ADD COLUMN type   INT   NOT NULL  DEFAULT 0;

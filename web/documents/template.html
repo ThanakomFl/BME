@@ -1,0 +1,129 @@
+<div class="row">
+    <div class="col-md-4" style="margin-bottom: 15px;">
+        <input type="text" title="ค้นหา" placeholder="ค้นหา" class="form-control"
+            ng-model="filters.keyword" ng-change="applyFilters();">
+    </div>
+    <div class="col-md-3">
+        <select title="ประเภท" class="form-control" style="width: auto; display: inline-block;"
+            ng-model="filters.type" ng-change="applyFilters();">
+            <option ng-value="0">ประเภททั้งหมด</option>
+            <option ng-repeat="type in types" ng-value="type.value">
+                {{type.text}}
+            </option>
+        </select>
+    </div>
+    <div class="col-md-5">
+        <select title="วันที่" class="form-control" style="width: auto; display: inline-block;"
+            ng-model="filters.date" ng-change="applyFilters();">
+            <option ng-value="0">วันที่ทั้งหมด</option>
+            <option ng-repeat="date in range(1, 31)" ng-value="date">
+                {{date}}
+            </option>
+        </select>
+        <select title="เดือน" class="form-control" style="width: auto; display: inline-block;"
+            ng-model="filters.month" ng-change="applyFilters();">
+            <option ng-value="0">เดือนทั้งหมด</option>
+            <option ng-value="1">มกราคม</option>
+            <option ng-value="2">กุมภาพันธ์</option>
+            <option ng-value="3">มีนาคม</option>
+            <option ng-value="4">เมษายน</option>
+            <option ng-value="5">พฤษภาคม</option>
+            <option ng-value="6">มิถุนายน</option>
+            <option ng-value="7">กรกฎาคม</option>
+            <option ng-value="8">สิงหาคม</option>
+            <option ng-value="9">กันยายน</option>
+            <option ng-value="10">ตุลาคม</option>
+            <option ng-value="11">พฤศจิกายน</option>
+            <option ng-value="12">ธันวาคม</option>
+        </select>
+        <select title="ปี" class="form-control" style="width: auto; display: inline-block;"
+            ng-model="filters.year" ng-change="applyFilters();">
+            <option ng-value="0">ปีทั้งหมด</option>
+            <option ng-repeat="date in range(2560, 2600)" ng-value="date">
+                {{date}}
+            </option>
+        </select>
+    </div>
+</div>
+<div>
+    <div class="col-xs-6">
+        <table class="table table-condensed table-hover table-bordered">
+            <thead>
+            <tr>
+                <th class="bg-primary">ชื่อไฟล์</th>
+                <th class="bg-primary">วันที่</th>
+                <th class="bg-primary">ประเภท</th>
+                <th class="bg-primary">ขนาด</th>
+                <th class="bg-primary">จัดการ</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="document in filteredDocuments" ng-class="{'bg-info': document == preview}">
+                <th class="small">
+                    <a href="{{'/file.php'|url}}?id={{document.file}}&key={{document.file_secret}}"
+                       target="_blank">
+                        {{document.file_name | stringPreview}}
+                    </a>
+                </th>
+                <td class="small" style="white-space: nowrap;">
+                    <div>
+                        {{document.uploaded_dt | date}}
+                    </div>
+                    <div ng-if="document.time">
+                        {{document.uploaded_dt | time}}
+                    </div>
+                </td>
+                <td class="small" style="white-space: nowrap;">{{document.type_text}}</td>
+                <td class="small" style="white-space: nowrap;">{{document.file_size | fileSize}}</td>
+                <td style="white-space: nowrap;">
+                    <button class="btn btn-xs btn-default" ng-click="setPreview(document);"
+                            ng-disabled="document == preview">
+                        <i class="fa fa-eye"></i>
+                        ตัวอย่าง
+                    </button>
+                    <a ng-if="editor" href="{{'/editor/documents.php'|url}}?mode={{mode}}&id={{document.id}}"
+                        class="btn btn-xs btn-info">
+                        <i class="fa fa-edit"></i>
+                        แก้ไข
+                    </a>
+                    <a ng-if="editor" href="{{'/editor/documents.php'|url}}?mode={{mode}}&action=delete&id={{document.id}}"
+                       class="btn btn-xs btn-danger" onclick="return confirm('แน่ใจหรือไม่ว่าต้องการลบ');">
+                        <i class="fa fa-trash-o"></i>
+                        ลบ
+                    </a>
+                </td>
+            </tr>
+            <tr ng-if="!filteredDocuments.length">
+                <td colspan="5" class="bg-warning text-center" style="font-size: 1em !important;">
+                    ไม่มีผลลัพธ์
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-xs-6" ng-if="preview">
+        <div style="
+            background-color: #ffffff;
+            box-shadow: 0 0 10px #000000;
+            z-index: 1000;
+        " ng-class="{'position-fixed': filteredDocuments.length > 10}">
+            <div class="text-right">
+                <a href="javascript:void(0);" ng-click="setPreview(null);" class="close">
+                    <i class="fa fa-times"></i>
+                </a>
+            </div>
+            <a href="{{'/file.php'|url}}?id={{preview.preview}}&key={{preview.preview_secret}}"
+               target="_blank">
+                <img src="{{'/file.php'|url}}?id={{preview.preview}}&key={{preview.preview_secret}}"
+                     style="width: 100%; height: auto;">
+            </a>
+            <div class="text-center" style="margin-bottom: 2px;">
+                <a href="{{'/file.php'|url}}?id={{preview.preview}}&key={{preview.preview_secret}}"
+                   class="btn btn-xs btn-default" target="_blank">
+                   <i class="fa fa-arrows-alt"></i>
+                    ดูภาพใหญ่
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
